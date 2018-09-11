@@ -13,7 +13,7 @@
 #include "vtkCellArray.h"
 #include "vtkVertexGlyphFilter.h"
 
-vtkCxxRevisionMacro(vtkStratifiedSampling, "$Revision: 1.70 $");
+// vtkCxxRevisionMacro(vtkStratifiedSampling, "$Revision: 1.70 $");
 vtkStandardNewMacro(vtkStratifiedSampling);
 
 vtkStratifiedSampling::vtkStratifiedSampling()
@@ -73,7 +73,7 @@ int vtkStratifiedSampling::RequestData(vtkInformation *vtkNotUsed(request),
   
   vtkSmartPointer<vtkVertexGlyphFilter> glyphFilter = 
       vtkSmartPointer<vtkVertexGlyphFilter>::New();
-  glyphFilter->SetInputConnection(outputPoints->GetProducerPort());
+  glyphFilter->SetInputData(outputPoints);
   glyphFilter->Update();
   
   output->ShallowCopy(glyphFilter->GetOutput());
