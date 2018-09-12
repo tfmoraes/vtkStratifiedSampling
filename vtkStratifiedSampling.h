@@ -3,7 +3,7 @@
 
 #include "vtkPolyDataAlgorithm.h"
 
-class vtkStratifiedSampling : public vtkPolyDataAlgorithm 
+class VTK_EXPORT vtkStratifiedSampling : public vtkPolyDataAlgorithm 
 {
 public:
   vtkTypeMacro(vtkStratifiedSampling,vtkPolyDataAlgorithm);
