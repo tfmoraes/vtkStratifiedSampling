@@ -7,6 +7,7 @@ Project(StratifiedSampling)
 FIND_PACKAGE(VTK REQUIRED)
 INCLUDE(${VTK_USE_FILE})
 
+# include_directories("${PYTHON_INCLUDE_DIR}")
 # set(NAME StratifiedSampling CACHE STRING "vtk-gdcm lib name")
 
 
@@ -72,22 +73,30 @@ include(${VTK_CMAKE_DIR}/vtkWrapPython.cmake)
           ${CMAKE_CURRENT_SOURCE_DIR}
         )
 # set(WRAP_LIST StratifiedSampling)
-VTK_WRAP_PYTHON3(vtkStratifiedSamplingPython  vtkStratifiedSamplingPython_SRCS ${sources} vtkStratifiedSampling.cxx)
-add_library(vtkStratifiedSamplingPythonD ${vtkStratifiedSamplingPython_SRCS} vtkStratifiedSampling vtkStratifiedSampling.cxx)
+VTK_WRAP_PYTHON3(vtkStratifiedSamplingPython vtkStratifiedSamplingPython_SRCS vtkStratifiedSampling.cxx)
+
+add_library(vtkStratifiedSamplingPythonD SHARED ${vtkStratifiedSamplingPython_SRCS} vtkStratifiedSampling.cxx)
 target_link_libraries(vtkStratifiedSamplingPythonD
         ${VTK_LIBRARIES}
+        vtkStratifiedSampling
         vtkWrappingPythonCore
         ${VTK_PYTHON_LIBRARIES})
 
-add_library(vtkStratifiedSamplingPython MODULE vtkStratifiedSamplingPythonInit.cxx)
+    add_library(vtkStratifiedSamplingPython SHARED vtkStratifiedSamplingPythonInit.cxx)
 
-set(VTK_MODULES_USED vtkCommonDataModel vtkCommonCore )
+set(VTK_MODULES_USED
+    vtkCommonDataModel
+    vtkCommonCore
+    vtkImagingCore
+    vtkImagingSources
+    vtkIOImage
+    vtkIOLegacy)
 set(VTK_PYTHOND_LIBS)
 foreach(TMP_LIB ${VTK_MODULES_USED})
    set(VTK_PYTHOND_LIBS ${VTK_PYTHOND_LIBS} ${TMP_LIB}PythonD)
 endforeach()
 
-target_link_libraries(vtkStratifiedSamplingPython vtkStratifiedSamplingPythonD ${VTK_PYTHOND_LIBS} ${VTK_LIBRARIES})
+target_link_libraries(vtkStratifiedSamplingPython vtkStratifiedSampling vtkStratifiedSamplingPythonD ${VTK_PYTHOND_LIBS} ${VTK_LIBRARIES})
 
 set_target_properties(vtkStratifiedSamplingPython PROPERTIES PREFIX "")
 if(WIN32 AND NOT CYGWIN)
