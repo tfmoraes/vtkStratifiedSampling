@@ -1,10 +1,13 @@
 cmake_minimum_required(VERSION 2.6)
 
 Project(StratifiedSampling)
+set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake_scripts/  ${CMAKE_MODULE_PATH})
 ENABLE_TESTING()
 
 FIND_PACKAGE(VTK REQUIRED)
 INCLUDE(${VTK_USE_FILE})
+
+set(NAME StratifiedSampling CACHE STRING "vtk-gdcm lib name")
 
 
 SET(BUILD_PARAVIEW_PLUGIN OFF CACHE BOOL "Build Paraview plugin?")
@@ -59,3 +62,18 @@ ${sources})
 TARGET_LINK_LIBRARIES(Test ${VTK_LIBRARIES})
 
 ADD_TEST(StratifiedSamplingTest Test)
+
+include(${VTK_CMAKE_DIR}/vtkWrapPython.cmake)
+        include_directories(
+          ${PYTHON_INCLUDE_DIR}
+          ${CMAKE_CURRENT_SOURCE_DIR}
+        )
+# set(WRAP_LIST StratifiedSampling)
+VTK_WRAP_PYTHON3(vtkStratifiedSamplingPython  vtkStratifiedSamplingPython_SRCS vtkStratifiedSampling.cxx)
+add_library(vtkStratifiedSamplingPythonD ${vtkStratifiedSamplingPython_SRCS} vtkStratifiedSampling.cxx)
+target_link_libraries(vtkStratifiedSamplingPythonD
+        ${VTK_LIBRARIES}
+        vtkWrappingPythonCore
+        ${VTK_PYTHON_LIBRARIES})
+
+add_library(vtkStratifiedSamplingPython MODULE vtkStratifiedSamplingPythonInit.cxx)
